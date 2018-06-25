@@ -39,6 +39,7 @@ def user_agent():
 def load_page(url):
     headers = {}
     headers['User-Agent'] = user_agent()
+    #requests.add_header("Host", "image.baidu.com")
     response = requests.get(url, headers=headers,timeout=30)
     response.encoding = 'utf-8'
     html = response.text
@@ -72,21 +73,28 @@ def  baidtu_uncomplie(url):
 
 
 def main():
-    key_word = raw_input()
-    url = "http://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&fp=result&word="+ key_word +"&pn=90&rn=30"
-    html = str(load_page(url))
-    #print (json.dumps(json_data, sort_keys=True, indent=4, separators=(',', ': ')))
-    #with open("js.txt", "w") as f:
-    #    f.write(json_data)    
-    #deal_json(json_data)
-    #print(html)
-    context = find_url(html)
+    key_word = raw_input("爬取关键字")
+    num = raw_input("爬取数量")
+    i = 0
     img_url = []
-    for x in context:
-        res = baidtu_uncomplie(x)
-        img_url.append(res)
-    print(img_url)
-
+    print(num)
+    while (int(i) <= int(num)):
+        url = "http://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&fp=result&word="+ key_word +"&pn="+ str(i) +"&rn=30"
+        print(url)
+        html = str(load_page(url))
+        #print (json.dumps(json_data, sort_keys=True, indent=4, separators=(',', ': ')))
+        #with open("js.txt", "w") as f:
+        #    f.write(json_data)    
+        #deal_json(json_data)
+        #print(html)
+        context = find_url(html)        
+        for x in context:
+            res = baidtu_uncomplie(x)
+            img_url.append(res)
+        i = i+30    
+        #print(i)
+    for x in img_url:
+        print(x)
 
 
 
