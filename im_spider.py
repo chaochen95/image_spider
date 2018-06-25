@@ -44,21 +44,51 @@ def load_page(url):
     html = response.text
     return html
 
-def deal_json(json_data):
-    #hjson = []
-    hjson = json.dumps(json_data)
-    print(hjson)
+def find_url(html):
+    '''正则查找objurl'''
+    with open("js.txt", "w") as f:
+        f.write(html)    
+    pattern = re.compile('"objURL":"(.*?)"', re.S)
+    context = pattern.findall(html)
+    return context
+
+def  baidtu_uncomplie(url):
+    '''objurl解码'''
+    res = ''
+    c = ['_z2C$q', '_z&e3B', 'AzdH3F']
+    d= {'w':'a', 'k':'b', 'v':'c', '1':'d', 'j':'e', 'u':'f', '2':'g', 'i':'h', 't':'i', '3':'j', 'h':'k', 's':'l', '4':'m', 'g':'n', '5':'o', 'r':'p', 'q':'q', '6':'r', 'f':'s', 'p':'t', '7':'u', 'e':'v', 'o':'w', '8':'1', 'd':'2', 'n':'3', '9':'4', 'c':'5', 'm':'6', '0':'7', 'b':'8', 'l':'9', 'a':'0', '_z2C$q':':', '_z&e3B':'.', 'AzdH3F':'/'}
+    if(url==None or 'http' in url):
+        return url
+    else:
+        j= url
+        for m in c:
+            j=j.replace(m,d[m])
+        for char in j:
+            if re.match('^[a-w\d]+$',char):
+                char = d[char]
+            res= res+char
+        return res
+
 
 
 def main():
     key_word = raw_input()
     url = "http://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&fp=result&word="+ key_word +"&pn=90&rn=30"
-    json_data = str(load_page(url))
+    html = str(load_page(url))
     #print (json.dumps(json_data, sort_keys=True, indent=4, separators=(',', ': ')))
     #with open("js.txt", "w") as f:
     #    f.write(json_data)    
-    deal_json(json_data)
+    #deal_json(json_data)
     #print(html)
+    context = find_url(html)
+    img_url = []
+    for x in context:
+        res = baidtu_uncomplie(x)
+        img_url.append(res)
+    print(img_url)
+
+
+
 
 if __name__ == '__main__':
     main()
