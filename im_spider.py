@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
-
+import urllib
 import re
 import requests
 import random
 import json
 import sys
+import os
 
 reload(sys)
 
@@ -74,13 +75,13 @@ def  baidtu_uncomplie(url):
 
 def main():
     key_word = raw_input("爬取关键字")
-    num = raw_input("爬取数量")
+    num = raw_input("爬取数量(30倍数)")
     i = 0
     img_url = []
-    print(num)
+    #print(num)
     while (int(i) <= int(num)):
         url = "http://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&fp=result&word="+ key_word +"&pn="+ str(i) +"&rn=30"
-        print(url)
+        #print(url)
         html = str(load_page(url))
         #print (json.dumps(json_data, sort_keys=True, indent=4, separators=(',', ': ')))
         #with open("js.txt", "w") as f:
@@ -93,8 +94,21 @@ def main():
             img_url.append(res)
         i = i+30    
         #print(i)
+    cur_path = os.path.abspath(os.curdir)
+    goal_path = cur_path + '\\image'
+    if  not os.path.exists(goal_path):
+        os.mkdir('image')
+    j = 0
     for x in img_url:
-        print(x)
+        file_type = x[x.rfind('.'):]
+        loc = goal_path +'\\'+str(j) +file_type
+        #print(loc)
+        urllib.urlretrieve(x,loc)
+        j += 1
+        #print(file_type)
+        #img = load_page(x)
+        #with open("js.txt", "w") as f:
+        #    f.write(file)         
 
 
 
