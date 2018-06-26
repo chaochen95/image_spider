@@ -41,9 +41,9 @@ def load_page(url):
     headers = {}
     headers['User-Agent'] = user_agent()
     #requests.add_header("Host", "image.baidu.com")
-    response = requests.get(url, headers=headers,timeout=30)
-    response.encoding = 'utf-8'
-    html = response.text
+    res = requests.get(url, headers=headers,timeout=30)
+    res.encoding = 'utf-8'
+    html = res.text
     return html
 
 def find_url(html):
@@ -79,6 +79,8 @@ def main():
     i = 0
     img_url = []
     #print(num)
+
+    #获取图片链接
     while (int(i) <= int(num)):
         url = "http://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&fp=result&word="+ key_word +"&pn="+ str(i) +"&rn=30"
         #print(url)
@@ -95,20 +97,42 @@ def main():
         i = i+30    
         #print(i)
     cur_path = os.path.abspath(os.curdir)
-    goal_path = cur_path + '\\image'
+    goal_path = cur_path + '/image'
+    #print(goal_path)
+    #print(os.path.exists(goal_path))
     if  not os.path.exists(goal_path):
         os.mkdir('image')
     j = 0
+    dic = [".jpg",".png",".JPEG",".jpeg",".JPG",".PNG",".bmp",".BMP"]
     for x in img_url:
         file_type = x[x.rfind('.'):]
-        loc = goal_path +'\\'+str(j) +file_type
+        if not file_type in dic:
+            continue
+        loc = goal_path +'/'+str(j) +file_type
+        #print(x)
         #print(loc)
-        urllib.urlretrieve(x,loc)
-        j += 1
+        #urllib.urlretrieve(x,loc)
+
+        headers = {}
+        headers['User-Agent'] = user_agent()
+        #requests.add_header("Host", "image.baidu.com")
+        try:
+            res = requests.get(x, headers=headers,timeout=10)
+        except Exception as e:
+            continue
+        else:
+            res.encoding = 'utf-8'
+            html = res.content
+            print("正在下载第%s张"%j)
+            with open(loc, "w") as f:
+                f.write(html) 
+            j += 1
+
+ 	    
+
         #print(file_type)
         #img = load_page(x)
-        #with open("js.txt", "w") as f:
-        #    f.write(file)         
+       
 
 
 
