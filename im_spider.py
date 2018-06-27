@@ -117,8 +117,10 @@ def main():
         headers['User-Agent'] = user_agent()
         #requests.add_header("Host", "image.baidu.com")
         try:
-            res = requests.get(x, headers=headers,timeout=10)
+            res = requests.get(x, headers=headers,timeout=5)
         except Exception as e:
+            print(e)
+            print(x)
             continue
         else:
             res.encoding = 'utf-8'
