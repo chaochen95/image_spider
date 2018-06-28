@@ -6,9 +6,10 @@ import random
 import json
 import sys
 import os
+from PIL import Image
+import io
 
 reload(sys)
-
 sys.setdefaultencoding('utf-8')
 
 def user_agent():
@@ -71,7 +72,13 @@ def  baidtu_uncomplie(url):
             res= res+char
         return res
 
-
+def IsValidImage4Bytes(buf):
+  bValid = True
+  try:
+    Image.open(io.BytesIO(buf)).verify()
+  except:
+    bValid = False
+  return bValid
 
 def main():
     key_word = raw_input("爬取关键字")
@@ -125,10 +132,14 @@ def main():
         else:
             res.encoding = 'utf-8'
             html = res.content
-            print("正在下载第%s张"%j)
-            with open(loc, "w") as f:
-                f.write(html)
-            j += 1
+            if IsValidImage4Bytes(html):
+                print("正在下载第%s张"%j)
+                with open(loc, "w") as f:
+                    f.write(html)
+                j += 1
+            else:
+                continue
+                
 
  	    
 
