@@ -81,20 +81,20 @@ def main():
     #print(num)
 
     #获取图片链接
-    while (int(i) <= int(num)):
+    while (int(i) <= (int(num) - 30)):
         url = "http://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&fp=result&word="+ key_word +"&pn="+ str(i) +"&rn=30"
         #print(url)
         html = str(load_page(url))
         #print (json.dumps(json_data, sort_keys=True, indent=4, separators=(',', ': ')))
         #with open("js.txt", "w") as f:
-        #    f.write(json_data)    
+        #    f.write(json_data)
         #deal_json(json_data)
         #print(html)
-        context = find_url(html)        
+        context = find_url(html)
         for x in context:
             res = baidtu_uncomplie(x)
             img_url.append(res)
-        i = i+30    
+        i = i+30
         #print(i)
     cur_path = os.path.abspath(os.curdir)
     goal_path = cur_path + '/image'
@@ -127,14 +127,14 @@ def main():
             html = res.content
             print("正在下载第%s张"%j)
             with open(loc, "w") as f:
-                f.write(html) 
+                f.write(html)
             j += 1
 
  	    
 
         #print(file_type)
         #img = load_page(x)
-       
+
 
 
 
