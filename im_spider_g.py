@@ -85,16 +85,34 @@ def load_page(url):
     html = res.text
     return html
 
-def find_url(html):
-    '''正则查找imgurl'''
-    with open("js.txt", "w") as f:
-        f.write(html)    
-    pattern = re.compile('"objURL":"(.*?)"', re.S)
-    context = pattern.findall(html)
-    return context
+def down_img(url, img_type, key_word, x):
+    headers = {}
+    headers['User-Agent'] = user_agent()
+
+    cur_path = os.path.abspath(os.curdir)
+    goal_path = cur_path + '/image_' +key_word
+    if  not os.path.exists(goal_path):
+        os.mkdir('image_'+ key_word)
+    try:
+        res = requests.get(url, headers=headers, timeout=5)
+    except Exception as e:
+        print(e)
+        #print(x)
+        #continue
+    else:
+        res.encoding = 'utf-8'
+        html = res.content
+        if IsValidImage4Bytes(html):
+            print("正在下载第%s张"%(x+1))
+            loc = goal_path +'/'+str(x) + '.' +img_type
+            with open(loc, "w") as f:
+                f.write(html)
+            #j += 1
+        else:
+            print("false")
+            #continue
 
 
-'''
 def IsValidImage4Bytes(buf):
   bValid = True
   try:
@@ -102,7 +120,8 @@ def IsValidImage4Bytes(buf):
   except:
     bValid = False
   return bValid
-'''
+
+
 def main():
     key_word = raw_input("爬取关键字")
     #num = raw_input("爬取数量(30倍数)")
@@ -122,8 +141,13 @@ def main():
     js = json.loads(html)
     #print(js["items"][0]["link"])#图片url
     #print(js["items"][0]["mime"][js["items"][0]["mime"].rfind('/')+1:])#图片格式
-    img_url = js["items"][0]["link"]
-    img_type = js["items"][0]["mime"][js["items"][0]["mime"].rfind('/')+1:]
+    for x in xrange(0,10):
+        img_url = js["items"][x]["link"]
+        img_type = js["items"][x]["mime"][js["items"][x]["mime"].rfind('/')+1:]
+        down_img(img_url, img_type, key_word, x)  
+
+    
+
     #print(js['items'])
     #js_items = json.loads(tem)
     #print(js_items)
