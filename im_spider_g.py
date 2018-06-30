@@ -157,7 +157,7 @@ def main():
             else:
                 res.encoding = 'utf-8'
                 con = res.content
-                if True:#IsValidImage4Bytes(icontent):
+                if IsValidImage4Bytes(con):
                     print("正在下载第%s组%s张"%(i, x+1))
                     loc = goal_path +'/'+ str(i) + "_" + str(x) + '.' +img_type
                     with open(loc, "w") as f:
