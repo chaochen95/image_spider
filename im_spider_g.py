@@ -149,7 +149,7 @@ def main():
             headers = {}
             headers['User-Agent'] = user_agent()
             try:
-                res = requests.get(url, headers=headers, timeout=30)
+                res = requests.get(img_url, headers=headers, timeout=30)
             except Exception as e:
                 print(e)
                 print("连接错误")
