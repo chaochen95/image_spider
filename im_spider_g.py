@@ -8,7 +8,7 @@ import sys
 import os
 from PIL import Image
 import io
-
+import argparse
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -85,32 +85,8 @@ def load_page(url):
     html = res.text
     return html
 
-def down_img(url, img_type, key_word, x):
-    headers = {}
-    headers['User-Agent'] = user_agent()
+#def down_img(url, img_type, key_word, x):
 
-    cur_path = os.path.abspath(os.curdir)
-    goal_path = cur_path + '/image_' +key_word
-    if  not os.path.exists(goal_path):
-        os.mkdir('image_'+ key_word)
-    try:
-        res = requests.get(url, headers=headers, timeout=5)
-    except Exception as e:
-        print(e)
-        #print(x)
-        #continue
-    else:
-        res.encoding = 'utf-8'
-        html = res.content
-        if IsValidImage4Bytes(html):
-            print("正在下载第%s张"%(x+1))
-            loc = goal_path +'/'+str(x) + '.' +img_type
-            with open(loc, "w") as f:
-                f.write(html)
-            #j += 1
-        else:
-            print("false")
-            #continue
 
 
 def IsValidImage4Bytes(buf):
@@ -123,97 +99,74 @@ def IsValidImage4Bytes(buf):
 
 
 def main():
+    #添加命令行参数
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-isize", "--imgSize", help="图片大小 可选 huge, icon, large, medium, small, xlarge, xxlarge")
+    parser.add_argument("-itype", "--imgType", help="图片类型 可选 clipart, face, lineart, news, photo")
+    parser.add_argument("-icolor", "--imgColorType", help="图片色彩类型 可选 mono, gray, color")
+    parser.add_argument("-idcolor", "--imgDominantColor", help="图片主色调 可选 black, blue, brown, gray, green, pink, purple, teal, white, yellow, red, orange")
+    parser.add_argument("-ft", "--fileType", help="图片格式 可选 bmp, gif, png, jpg")
+    args = parser.parse_args()
+
+    url = "https://www.googleapis.com/customsearch/v1?"
+    if args.imgSize:
+        url = url + "&imgSize="+ args.imgSize
+    if args.imgType:
+        url = url + "&imgType="+ args.imgType
+    if args.imgColorType:
+        url = url + "&imgColorType="+ args.imgColorType
+    if args.imgDominantColor:
+        url = url + "&imgDominantColor="+ args.imgDominantColor
+    if args.fileType:
+        url = url + "&fileType="+ args.fileType 
+
+
     key_word = raw_input("爬取关键字")
-    #num = raw_input("爬取数量(30倍数)")
     cx = "001883515226962144273%3Awspeqvtkpfs"
     key = "AIzaSyAAqydVROyHH2Xq_y2u2NOlCa9rFUlQ8Qg"
-    #imgSize = ""
-    #imgType = ""
-    #imgColorType = ""
-    #imgDominantColor = ""
-    #fileType = ""
+    num = int(raw_input("爬取数量"))/10
     i = 1
-    img_url = []
-    #print(num)
-    url = "https://www.googleapis.com/customsearch/v1?q="+ key_word +"&num=10&start="+ str(i) +"&cx="+ cx +"&key="+ key +"&searchType=image&alt=json"#+"&imgSize="+ imgSize +"&imgType="+ imgType +"&imgColorType="+ imgColorType +"&imgDominantColor="+ imgDominantColor +"&fileType="+ fileType 
-    html = str(load_page(url))
-    #json = []
-    js = json.loads(html)
-    #print(js["items"][0]["link"])#图片url
-    #print(js["items"][0]["mime"][js["items"][0]["mime"].rfind('/')+1:])#图片格式
-    for x in xrange(0,10):
-        img_url = js["items"][x]["link"]
-        img_type = js["items"][x]["mime"][js["items"][x]["mime"].rfind('/')+1:]
-        down_img(img_url, img_type, key_word, x)  
 
-    
-
-    #print(js['items'])
-    #js_items = json.loads(tem)
-    #print(js_items)
-    
-
-    #获取图片链接
-    '''while (int(i) <= (int(num) - 30)):
-        url = "https://www.googleapis.com/customsearch/v1?q="+ key_word +"&num=10&start="+ str(i) +"&cx="+ cx +"&imgSize="+ imgSize +"&imgType="+ imgType +"&imgColorType="+ imgColorType +"&imgDominantColor="+ imgDominantColor +"&key="+ key +"&fileType="+ fileType +
-        #print(url)
-        html = str(load_page(url))
-        #print (json.dumps(json_data, sort_keys=True, indent=4, separators=(',', ': ')))
-        #with open("js.txt", "w") as f:
-        #    f.write(json_data)
-        #deal_json(json_data)
-        #print(html)
-        context = find_url(html)
-        for x in context:
-            res = baidtu_uncomplie(x)
-            img_url.append(res)
-        i = i+30
-        #print(i)
+    #创建目录
     cur_path = os.path.abspath(os.curdir)
-    goal_path = cur_path + '/image'
-    #print(goal_path)
-    #print(os.path.exists(goal_path))
+    goal_path = cur_path + '/image_' +key_word
     if  not os.path.exists(goal_path):
-        os.mkdir('image')
-    j = 0
-    dic = [".jpg",".png",".JPEG",".jpeg",".JPG",".PNG",".bmp",".BMP"]
-    for x in img_url:
-        file_type = x[x.rfind('.'):]
-        if not file_type in dic:
-            continue
-        loc = goal_path +'/'+str(j) +file_type
-        #print(x)
-        #print(loc)
-        #urllib.urlretrieve(x,loc)
+        os.mkdir('image_'+ key_word)
 
-        headers = {}
-        headers['User-Agent'] = user_agent()
-        #requests.add_header("Host", "image.baidu.com")
-        try:
-            res = requests.get(x, headers=headers,timeout=5)
-        except Exception as e:
-            print(e)
-            print(x)
-            continue
-        else:
-            res.encoding = 'utf-8'
-            html = res.content
-            if IsValidImage4Bytes(html):
-                print("正在下载第%s张"%j)
-                with open(loc, "w") as f:
-                    f.write(html)
-                j += 1
-            else:
-                print("false")
+    while i <= num:        
+        url = url + "&q=" +key_word +"&num=10&start="+ str(i) +"&cx="+ cx +"&key="+ key +"&searchType=image&alt=json"
+        html = str(load_page(url))
+        js = json.loads(html)
+
+           
+        #获取图片链接及图片类型
+        for x in xrange(0,10):
+            img_url = js["items"][x]["link"]
+            img_type = js["items"][x]["mime"][js["items"][x]["mime"].rfind('/')+1:]
+            #down_img(img_url, img_type, key_word, x)
+            
+            #下载图片
+            headers = {}
+            headers['User-Agent'] = user_agent()
+            try:
+                res = requests.get(url, headers=headers, timeout=30)
+            except Exception as e:
+                print(e)
+                print("连接错误")
                 continue
-                
-
- 	    
-
-        #print(file_type)
-        #img = load_page(x)
-'''
-
+            else:
+                res.encoding = 'utf-8'
+                con = res.content
+                if True:#IsValidImage4Bytes(icontent):
+                    print("正在下载第%s组%s张"%(i, x+1))
+                    loc = goal_path +'/'+ str(i) + "_" + str(x) + '.' +img_type
+                    with open(loc, "w") as f:
+                        f.write(con)
+                    
+                else:
+                    print("图片错误")
+                    continue
+        i += 1                  
 
 
 if __name__ == '__main__':
