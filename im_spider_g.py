@@ -97,6 +97,10 @@ def IsValidImage4Bytes(buf):
     bValid = False
   return bValid
 
+def get_img_type(buf):
+    img_type = Image.open(io.BytesIO(buf)).format
+    return img_type 
+
 
 def main():
     #添加命令行参数
@@ -125,24 +129,28 @@ def main():
     cx = "001883515226962144273%3Awspeqvtkpfs"
     key = "AIzaSyAAqydVROyHH2Xq_y2u2NOlCa9rFUlQ8Qg"
     num = int(raw_input("爬取数量"))/10
-    i = 1
 
+    url = url + "&q=" +key_word +"&num=10&filter=1&cx="+ cx +"&key="+ key +"&searchType=image&alt=json&start="
+    
+    i = 1
+    start = i
     #创建目录
     cur_path = os.path.abspath(os.curdir)
     goal_path = cur_path + '/image_' +key_word
     if  not os.path.exists(goal_path):
         os.mkdir('image_'+ key_word)
 
-    while i <= num:        
-        url = url + "&q=" +key_word +"&num=10&start="+ str(i) +"&cx="+ cx +"&key="+ key +"&searchType=image&alt=json"
-        html = str(load_page(url))
-        js = json.loads(html)
+    while i <= num:
 
+        full_url = url + str(start)
+        html = str(load_page(full_url))
+        js = json.loads(html)
+        #print(full_url)
            
         #获取图片链接及图片类型
         for x in xrange(0,10):
             img_url = js["items"][x]["link"]
-            img_type = js["items"][x]["mime"][js["items"][x]["mime"].rfind('/')+1:]
+            #img_type = js["items"][x]["mime"][js["items"][x]["mime"].rfind('/')+1:]
             #down_img(img_url, img_type, key_word, x)
             
             #下载图片
@@ -159,6 +167,7 @@ def main():
                 con = res.content
                 if IsValidImage4Bytes(con):
                     print("正在下载第%s组%s张"%(i, x+1))
+                    img_type = get_img_type(con).lower()
                     loc = goal_path +'/'+ str(i) + "_" + str(x) + '.' +img_type
                     with open(loc, "w") as f:
                         f.write(con)
@@ -166,7 +175,10 @@ def main():
                 else:
                     print("图片错误")
                     continue
-        i += 1                  
+        
+        i += 1
+        start += 10
+
 
 
 if __name__ == '__main__':
