@@ -139,7 +139,7 @@ def main():
     goal_path = cur_path + '/image_' +key_word
     if  not os.path.exists(goal_path):
         os.mkdir('image_'+ key_word)
-    dic = [".jpg",".png",".JPEG",".jpeg",".JPG",".PNG",".bmp",".BMP"]
+    dic = ["jpg","png","JPEG","jpeg","JPG","PNG","bmp","BMP"]
     while i <= num:
 
         full_url = url + str(start)
@@ -166,13 +166,16 @@ def main():
                 res.encoding = 'utf-8'
                 con = res.content
                 if IsValidImage4Bytes(con):
-                    print("正在下载第%s组%s张"%(i, x+1))
+                    
                     img_type = get_img_type(con).lower()
                     if not img_type in dic:
                         continue
+
                     loc = goal_path +'/'+ str(i) + "_" + str(x) + '.' +img_type
+                    print("正在下载第%s组%s张"%(i, x+1))
                     with open(loc, "w") as f:
                         f.write(con)
+                    print("下载完成")
                     
                 else:
                     print("图片错误")
