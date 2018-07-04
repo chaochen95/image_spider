@@ -22,30 +22,33 @@ def get_phash(img_dir):
     #cv2.destroyAllWindows()
     dct = cv2.dct(np.float32(img))
     
-    dct.resize(8,8)
+    #dct.resize(8,8)
+    #dct1_roi = dct[0:8,0:8] 
     print(dct)
     avg_dct = np.mean(dct)
     print(avg_dct)
     hash_num = []
     for i in range(img.shape[0]):
         for j in range(img.shape[1]):
-            if img[i][j] >avg_dct:
+            #print(img[i][j])
+            #print(img[i][j])
+            if img[i][j] > avg_dct:
                 hash_num.append(1)
             else:
                 hash_num.append(0)
-    #print(hash_num)
+    print(len(hash_num))
     return hash_num            
 def Hamming_distance(hash1, hash2):
     num = 0
     for x in range(len(hash1)):
-         if hash1[x] == hash2[x]:
+         if hash1[x] != hash2[x]:
               num += 1
     return num
     
 
 def main():
-    hash1 = get_phash("./image_piano+movie/1_4.jpeg")
-    hash2 = get_phash("./image_piano+movie/9_0.jpeg")
+    hash1 = get_phash("./image_piano+movie/2_0.png")
+    hash2 = get_phash("./image_piano+movie/1_0.jpeg")
     print(Hamming_distance(hash1, hash2))
 if __name__ == '__main__':
     main()
