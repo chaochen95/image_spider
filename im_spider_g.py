@@ -79,16 +79,12 @@ def user_agent():
 def load_page(url):
     headers = {}
     headers['User-Agent'] = user_agent()
-    #requests.add_header("Host", "image.baidu.com")
     res = requests.get(url, headers=headers,timeout=30)
     res.encoding = 'utf-8'
     html = res.text
     return html
 
-#def down_img(url, img_type, key_word, x):
-
-
-
+#判断图片是否完整
 def IsValidImage4Bytes(buf):
   bValid = True
   try:
@@ -97,6 +93,7 @@ def IsValidImage4Bytes(buf):
     bValid = False
   return bValid
 
+#获取图片类型
 def get_img_type(buf):
     img_type = Image.open(io.BytesIO(buf)).format
     return img_type 
@@ -134,7 +131,7 @@ def main():
     
     i = 1
     start = i
-    #创建目录
+    #创建下载目录
     cur_path = os.path.abspath(os.curdir)
     goal_path = cur_path + '/image_' +key_word
     if  not os.path.exists(goal_path):
@@ -145,13 +142,12 @@ def main():
         full_url = url + str(start)
         html = str(load_page(full_url))
         js = json.loads(html)
-        #print(full_url)
            
         #获取图片链接及图片类型
         for x in xrange(0,10):
             img_url = js["items"][x]["link"]
             #img_type = js["items"][x]["mime"][js["items"][x]["mime"].rfind('/')+1:]
-            #down_img(img_url, img_type, key_word, x)
+        
             
             #下载图片
             headers = {}
