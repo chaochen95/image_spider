@@ -9,6 +9,8 @@ import os
 from PIL import Image
 import io
 import argparse
+import dhash
+import time
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -145,7 +147,12 @@ def main():
            
         #获取图片链接及图片类型
         for x in xrange(0,10):
-            img_url = js["items"][x]["link"]
+            #print(x)
+            try:
+                img_url = js["items"][x]["link"]
+            except Exception as e:
+                continue
+            
             #img_type = js["items"][x]["mime"][js["items"][x]["mime"].rfind('/')+1:]
         
             
@@ -179,7 +186,11 @@ def main():
         
         i += 1
         start += 10
-
+    print("开始去重")
+    start = time.time()   
+    dhash.remove_file(goal_path)
+    end = time.time()
+    print("用时:"+str((end-start)/60))
 
 
 if __name__ == '__main__':

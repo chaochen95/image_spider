@@ -39,11 +39,11 @@ def Hamming_distance(hash1, hash2):
               num += 1
     return num
 
-def main():
+def remove_file(path):
     #hash1 = get_dhash("./image_piano+movie/1_6.jpeg")
     #hash2 = get_dhash("./image_piano+movie/1_7.jpeg")
     #print(Hamming_distance(hash1, hash2))
-    path = os.path.abspath(os.curdir)+"/image_piano+movie_test"
+    #path = os.path.abspath(os.curdir)+"/"+file_name
     dirs = os.listdir( path )
     for file1 in dirs:
         for file2 in dirs:
@@ -57,6 +57,7 @@ def main():
                 if Hamming_distance(hash1, hash2)<20:
                     try:
                         os.remove(path + "/" + file2)
+                        dirs.remove(path + "/" + file2)
                     except Exception as e:
                         continue
                     
