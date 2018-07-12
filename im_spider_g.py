@@ -110,7 +110,7 @@ def main():
     parser.add_argument("-idcolor", "--imgDominantColor", help="图片主色调 可选 black, blue, brown, gray, green, pink, purple, teal, white, yellow, red, orange")
     parser.add_argument("-ft", "--fileType", help="图片格式 可选 bmp, gif, png, jpg")
     args = parser.parse_args()
-
+    print("1")
     url = "https://www.googleapis.com/customsearch/v1?"
     if args.imgSize:
         url = url + "&imgSize="+ args.imgSize
@@ -128,9 +128,9 @@ def main():
     cx = "001883515226962144273%3Awspeqvtkpfs"
     key = "AIzaSyAAqydVROyHH2Xq_y2u2NOlCa9rFUlQ8Qg"
     num = int(raw_input("爬取数量"))/10
-
+    #print("参数获取完成")
     url = url + "&q=" +key_word +"&num=10&filter=1&cx="+ cx +"&key="+ key +"&searchType=image&alt=json&start="
-    
+    #print("拼接url")
     i = 1
     start = i
     #创建下载目录
@@ -150,7 +150,9 @@ def main():
             #print(x)
             try:
                 img_url = js["items"][x]["link"]
+                #print("获取图片url：" + img_url)
             except Exception as e:
+                print("获取图片url失败")
                 continue
             
             #img_type = js["items"][x]["mime"][js["items"][x]["mime"].rfind('/')+1:]
